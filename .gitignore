@@ -2,4 +2,8 @@
 *.pdf
 *~
 *.out
+*.meta
+*.data
 tmp*
+*.pyc
+*.zip
