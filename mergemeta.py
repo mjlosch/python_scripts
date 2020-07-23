@@ -12,12 +12,12 @@ from getopt import gnu_getopt as getopt
 import glob
 from MITgcmutils import rdmds, wrmds
 
-# parse command-line arguments
-try:
-    optlist,args = getopt(sys.argv[1:], ':', ['verbose'])
-    assert len(args) > 0
-except (AssertionError):
-    sys.exit(__doc__)
+# # parse command-line arguments
+# try:
+#     optlist,args = getopt(sys.argv[1:], ':', ['verbose'])
+#     assert len(args) > 0
+# except (AssertionError):
+#     sys.exit(__doc__)
 
 files = glob.glob('*.001.001.meta')
 # files=[]
