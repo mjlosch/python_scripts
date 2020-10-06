@@ -7,15 +7,15 @@ def pcol(*arguments, **kwargs):
 
     pcol(C, **kwargs)
     pcol(X, Y, C, **kwargs)
-    
+
     Create a pseudocolor plot of a 2-D array (with pcolormesh).
-    
+
     *C* is the array of color values.
-    
+
     *X* and *Y*, if given, specify the (*x*, *y*) coordinates of
     the colored quadrilaterals; the quadrilateral for C[i,j] has
     corners at::
-    
+
     (X[i,   j],   Y[i,   j]),
     (X[i,   j+1], Y[i,   j+1]),
     (X[i+1, j],   Y[i+1, j]),
@@ -26,11 +26,12 @@ def pcol(*arguments, **kwargs):
     last row and column of *C* will be ignored.
 
     **kwargs are passed to pcolormesh.
-    
+
     """
 
     arglen = len(arguments)
     h = []
+
     if arglen == 1:
         # nothing to do just call pcolormesh
         h = plt.pcolormesh(arguments[0], **kwargs)
@@ -50,7 +51,7 @@ def pcol(*arguments, **kwargs):
                 y = np.vstack([y,2*y[-1,:]-y[-2,:]])
         else:
             raise Exception("dimension mismatch")
-            
+
         h = plt.pcolormesh(x, y, data, **kwargs)
     else:
         raise Exception("wrong number of arguments")
