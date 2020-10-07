@@ -22,7 +22,7 @@ def mit_div(u,v,hfw,hfs,dxg,dyg,rac):
         raise ValueError('Can only handle 2 to 4 dimensions')
 
     # check for 2D arrays
-    # in this case nk is the time dimention and we need to have
+    # in this case nk is the time dimension and we need to have
     # a separate index for hfw and hfs
     if len(np.shape(hfw)) == 2 or np.shape(hfw)[0] != nk:
         nt = nk
@@ -38,7 +38,7 @@ def mit_div(u,v,hfw,hfs,dxg,dyg,rac):
         cubed_sphere = 1
 
     llcap = 0
-    if nju==niu:
+    if nju==13*niu:
         print('shape(u)[-2]=13*shape(u)[-1]: assuming lat-lon-cap fields')
         llcap = 1
 
@@ -80,42 +80,42 @@ def mit_div(u,v,hfw,hfs,dxg,dyg,rac):
 
         div = np.transpose(div,[0,1,3,2,4]).reshape(nt,nk,n,n*6)
     elif llcap:
-        n = nju
-        div = np.zeros((nt, nk, 6, n, n), dtype=u.dtype)
         u   = u.reshape(nt,nk,nju,niu)
         v   = v.reshape(nt,nk,njv,niv)
         hfw = hfw.reshape(nk,nju,niu)
         hfs = hfs.reshape(nk,njv,niv)
+        div = np.zeros(u.shape)
+
+        from MITgcmutils.llc import faces
+        racf = faces(rac)
         for t in range(0,nt):
             for k in range(0,nk):
-                uflx = u[t,k,:,:]*hfw[k,:,:]*dyg
-                vflx = v[t,k,:,:]*hfs[k,:,:]*dxg
-                uflx = np.transpose(uflx.reshape(n,6,n),[1,0,2])
-                vflx = np.transpose(vflx.reshape(n,6,n),[1,0,2])
-                for iface in range(0,6):
-                    ifp1=np.remainder(iface+1,6)
-                    ifp2=np.remainder(iface+2,6)
-                    if np.remainder(iface+1,2):
-                        # odd face
-                        utmp = np.concatenate((uflx[iface,:,1:n],
-                                               uflx[ifp1,:,0].reshape(n,1)),1)
-                        tmp = uflx[ifp2,np.arange(n,0,-1)-1,0].reshape(1,n)
-                        vtmp = np.concatenate((vflx[iface,1:n,:],tmp),0)
-                    else:
-                        # even face
-                        tmp = vflx[ifp2,0,np.arange(n,0,-1)-1].reshape(n,1)
-                        utmp = np.concatenate((uflx[iface,:,1:n],tmp),1)
-                        vtmp = np.concatenate((vflx[iface,1:n,:],
-                                               vflx[ifp1,0,:].reshape(1,n)),0)
+                uflx = faces(u[t,k,:,:]*hfw[k,:,:]*dyg)
+                vflx = faces(v[t,k,:,:]*hfs[k,:,:]*dxg)
+                divf = faces(zeros(uflx.shape))
+                for iface in range(len(uflx)-1):
+                    du = np.roll(uflx[iface],-1,axis=-1)-uflx[iface]
+                    dv = np.roll(vflx[iface],-1,axis=-2)-vflx[iface]
+                    # now take care of the connectivity
+                    if iface==0:
+                        du[:,-1] = uflx[1][:,   0] - uflx[iface][:,-1]
+                        dv[-1,:] = uflx[2][::-1,0] - vflx[iface][-1,:]
+                    if iface==1:
+                        du[:,-1] = vflx[3][0,::-1] - uflx[iface][:,-1]
+                        dv[-1,:] = vflx[2][0,:]    - vflx[iface][-1,:]
+                    if iface==2:
+                        du[:,-1] = uflx[3][:,   0] - uflx[iface][:,-1]
+                        dv[-1,:] = uflx[4][::-1,0] - vflx[iface][-1,:]
+                    if iface==3:
+                        du[:,-1] = 0. # hack
+                        dv[-1,:] = vflx[4][0,:]    - vflx[iface][-1,:]
+                    if iface==4:
+                        du[:,-1] = 0. # hack
+                        dv[-1,:] = uflx[0][::-1,0] - vflx[iface][-1,:]
+                    # putting it all together
+                    divf[iface] = (du + dv)/racf[iface]
 
-                    ij=np.arange(0,n)+n*iface
-#                    recip_rac = 1./(rac(ij,:).*hf(ij,:,k));
-                    recip_rac = 1./rac[:,ij]
-                    du = utmp-uflx[iface,:,:]
-                    dv = vtmp-vflx[iface,:,:]
-                    div[t,k,iface,:,:] = (du + dv)*recip_rac;
-
-        div = np.transpose(div,[0,1,3,2,4]).reshape(nt,nk,n,n*6)
+                div[t,k,:,:] = faces2mds(divf)
     else:
         div = np.zeros((nt, nk, nj, ni), dtype=u.dtype)
         u   = u.reshape(nt,nk,nju,niu)
