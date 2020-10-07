@@ -31,7 +31,6 @@ def mit_div(u,v,hfw,hfs,dxg,dyg,rac):
     nj = np.min([nju,njv])
     ni = np.min([niu,niv])
 
-
     cubed_sphere = 0
     if niu==6*nju:
         print('shape(u)[-1]=6*shape(u)[-2]: assuming cubed sphere fields')
@@ -86,13 +85,13 @@ def mit_div(u,v,hfw,hfs,dxg,dyg,rac):
         hfs = hfs.reshape(nk,njv,niv)
         div = np.zeros(u.shape)
 
-        from MITgcmutils.llc import faces
+        from MITgcmutils.llc import faces, faces2mds
         racf = faces(rac)
         for t in range(0,nt):
             for k in range(0,nk):
                 uflx = faces(u[t,k,:,:]*hfw[k,:,:]*dyg)
                 vflx = faces(v[t,k,:,:]*hfs[k,:,:]*dxg)
-                divf = faces(zeros(uflx.shape))
+                divf = faces(np.zeros((nju,niu)))
                 for iface in range(len(uflx)-1):
                     du = np.roll(uflx[iface],-1,axis=-1)-uflx[iface]
                     dv = np.roll(vflx[iface],-1,axis=-2)-vflx[iface]
