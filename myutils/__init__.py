@@ -6,10 +6,12 @@ from .factor import factor, factors
 from .atmtools import lwdown, swdown, aqh
 from .sphericalDistance import sphericalDistance
 from .mycolmap import mycolmap
+from .shellutils import getiters
 
 __all__ = ['sq', 'pcol', 'mit_div', 'mit_bottomfield',
            'readfield', 'writefield',
            'factor', 'factors',
            'lwdown', 'swdown', 'aqh',
            'sphericalDistance',
-           'mycolmap']
+           'mycolmap',
+           'getiters']
