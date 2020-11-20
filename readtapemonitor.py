@@ -32,18 +32,21 @@ nsteps=48
 tsnumber = range(niter0+nsteps,niter0,-1)
 
 def get_parms (fname):
-    rhoIce = 910.
     with open(fname) as f:
         for line in f:
             if 'nIter0   =   /* Run starting timestep number */' in line:
                 nIter0 = int(next(f).strip().split()[-1])
             elif 'nTimeSteps = /* Number of timesteps */' in line:
                 nTimeSteps = int(next(f).strip().split()[-1])
+            elif 'Model clock timestep' in line:
+                deltaT = float((next(f).strip().split()[-1]).replace('E','e'))
+            elif 'Monitor output interval' in line:
+                interval = float((next(f).strip().split()[-1]).replace('E','e'))
 
-    return nIter0, nTimeSteps
+    return nIter0, nTimeSteps, max(int(interval/deltaT),1)
 
-niter0,nsteps=get_parms(fname)
-tsnumber = range(niter0+nsteps,niter0,-1)
+niter0,nsteps,interval=get_parms(fname)
+tsnumber = range(niter0+nsteps,niter0,-interval)
 vars=[]
 for k,mynumber in enumerate(tsnumber):
     print(k,mynumber)
