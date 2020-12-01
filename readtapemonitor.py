@@ -74,9 +74,12 @@ for k,mynumber in enumerate(tsnumber):
 # convert to numpy array
 etamin = np.asarray(vars)
 
-plt.clf(); plt.plot(tsnumber[:len(vars)],etamin[:,1:3],'x-')
+plt.clf();
+plt.plot(tsnumber[:len(vars)],etamin[:,2],'+-',label='chklev 2')
+plt.plot(tsnumber[:len(vars)],etamin[:,3],'-.',label='chklev 1')
 plt.xlabel('timestep')
 plt.ylabel(varname)
+plt.legend()
 plt.show()
 
 #grep -A6 "(PID.TID 0000.0001) %MON time_tsnumber                =                472740" STDOUT.0000 | grep eta_min
