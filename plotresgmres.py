@@ -118,7 +118,7 @@ for axitem in ax:
 #    axitem.set_xlim([np.max([0,iters[-1]-10*100]),iters[-1]])
     axitem.grid(True)
 
-plt.show()
+fig.show()
 
 figname = 'res'
 #fig.savefig(figname)
