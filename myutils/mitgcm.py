@@ -128,12 +128,12 @@ def mit_div(u,v,hfw,hfs,dxg,dyg,rac):
                 if niu > niv:
                     du = uflx[:,1:]-uflx[:,:-2]
                 else:
-                    du = np.roll(uflx,1,1)-uflx
+                    du = np.roll(uflx,1,-1)-uflx
 
                 if njv > nju:
                     dv = vflx[1:,:]-vflx[:-2,:]
                 else:
-                    dv = np.roll(vflx,1,1)-vflx
+                    dv = np.roll(vflx,1,-2)-vflx
 
                 div[t,k,:,:] = ( du + dv )/rac;
 
