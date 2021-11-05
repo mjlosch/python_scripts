@@ -1,0 +1,17 @@
+name: mitgcm
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python
+  - ipympl
+  - numpy
+  - jupyterlab=3.*
+  - jupyter
+  - matplotlib
+  - nodejs
+  - dask
+  - xarray
+  - basemap
+  - conda
+
