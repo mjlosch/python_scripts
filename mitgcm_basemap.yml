@@ -6,15 +6,13 @@ dependencies:
   - python
   - ipympl
   - numpy
-  - jupyterlab
+  - jupyterlab=3.*
   - jupyter
   - matplotlib
   - nodejs
   - dask
   - xarray
-  - cartopy
-  - xmitgcm
-  - xgcm
+  - basemap
   - cmocean
   - conda
-prefix: /home/ollie/mlosch/miniconda3/envs/mitgcm
+
