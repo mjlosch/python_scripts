@@ -80,15 +80,16 @@ fig = plt.figure(figsize=(12, 4))
 ax=fig.add_subplot(111)
 
 refdate = datetime.datetime(1,1,1,0,0)
-refdate = datetime.datetime(1979,1,1,0,0)
-refdate = datetime.datetime(1978,1,1,0,0)
+#refdate = datetime.datetime(1979,1,1,0,0)
+#refdate = datetime.datetime(1958,1,1,0,0)
 # determine start date
 with open(files[0]) as f:
     for line in f:
         if 'startDate_1' in line:
             ll = line.strip().split('=')[-1]
+            refdate = datetime.datetime(int(ll[0:4]),int(ll[4:6]),int(ll[6:8]))
 
-refdate = datetime.datetime(int(ll[0:4]),int(ll[4:6]),int(ll[6:8]))
+#refdate = datetime.datetime(2001,1,1)
 timesec, h = get_output(files, mystr)
 if np.all(np.isnan(h)): sys.exit("only nans in timeseries")
 timeday = np.asarray(timesec)/86400.
