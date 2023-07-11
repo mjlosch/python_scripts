@@ -1,6 +1,6 @@
 def factor(n):
     """Compute prime factors of n
-    
+
     Usage: factor(n)
     """
     import numpy
@@ -8,8 +8,8 @@ def factor(n):
     # 0. extract factors of 2
     #
     factors = []
-    while n/2 == n/2.:
-        n = n/2
+    while n//2 == n/2.:
+        n = n//2
         factors.append(2)
     #
     # 1. Create an array of trial values
@@ -46,7 +46,7 @@ def factor(n):
 
     return factors
 
-def factors(n):    
+def factors(n):
     from functools import reduce
-    return set(reduce(list.__add__, 
+    return set(reduce(list.__add__,
                       ([i, n//i] for i in range(1, int(n**0.5) + 1) if n % i == 0)))
