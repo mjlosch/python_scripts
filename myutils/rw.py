@@ -5,7 +5,7 @@ def readfield(fname,dims,datatype):
     """Call signatures::
 
     readfield(filename, dims, numpy.datatype)
-    
+
     Read unblocked binary data with dimentions "dims".
     """
 
@@ -22,7 +22,7 @@ def readfield(fname,dims,datatype):
     if   len(v) == np.prod(dims):     v = v.reshape(dims)
     elif len(v) == np.prod(dims[1:]): v = v.reshape(dims[1:])
     else:
-        errstr = (  "dimensions do not match: \n len(data) = " + str(len(v)) 
+        errstr = (  "dimensions do not match: \n len(data) = " + str(len(v))
                   + ", but prod(dims) = " + str(np.prod(dims)) )
         raise RuntimeError(errstr)
 
@@ -32,15 +32,14 @@ def writefield(fname,data):
     """Call signatures::
 
     writefield(filename, numpy.ndarray)
-    
-    Write unblocked binary data.
+
+    Write unblocked binary data with big endian byte ordering.
     """
 
-    if sys.byteorder == 'little': data.byteswap(True)
-
     fid = open(fname,"wb")
-    data.tofile(fid)
-    fid.close()
+    if sys.byteorder == 'little':
+        data.byteswap(False).tofile(fid)
+    else:
+        data.tofile(fid)
 
-    # switch back to machine format
-    if sys.byteorder == 'little': data.byteswap(True)
+    fid.close()
