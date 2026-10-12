@@ -70,7 +70,7 @@ def get_output (fnames, mystring):
                 if "time_secondsf" in line:
                     ll = line.split()
                     timev.append(float(ll[-1].replace('D','e')))
-                    myvar.append(np.NaN)
+                    myvar.append(np.nan)
 
                 if mystring in line:
                     ll = line.split()

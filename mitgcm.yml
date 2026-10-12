@@ -17,4 +17,4 @@ dependencies:
   - xgcm
   - cmocean
   - conda
-prefix: /home/ollie/mlosch/miniconda3/envs/mitgcm
+prefix: /albedo/home/mlosch/miniconda3/envs/mitgcm
