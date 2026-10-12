@@ -124,4 +124,4 @@ print("std        = "+str(np.std(hh)))
 print("last-first = "+str(h[-1]-h[0]))
 
 
-#plt.show()
+plt.show()
