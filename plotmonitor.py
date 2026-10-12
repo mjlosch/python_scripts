@@ -9,6 +9,7 @@ from getopt import gnu_getopt as getopt
 import matplotlib.pyplot as plt
 import numpy as np
 import datetime
+from pathlib import Path
 
 # parse command-line arguments
 try:
@@ -30,6 +31,30 @@ else:
 def getKey(item):
     return item[0]
 
+def monitor(path, name):
+    return np.asarray(
+        [float(ln.split("=")[1].strip().replace('D','e')) for ln in
+         Path(path).read_text().splitlines() if f"%MON {name} " in ln]
+        )
+
+
+def get_monitor(fnames, vname):
+    timev = np.array([])
+    myvar = np.array([])
+    for fname in fnames:
+        try:
+            timevs = monitor(fname, "time_secondsf")
+            myvars = monitor(fname, vname)
+        except:
+            print(fname + " does not exist, continuing")
+        else:
+            timev = np.append(timev,timevs)
+            myvar = np.append(myvar,myvars)
+
+    isort = np.argsort(timev)
+
+    return timev[isort], myvar[isort]
+
 def get_output (fnames, mystring):
     """parse fname and get some numbers out"""
     timev = []
@@ -41,46 +66,30 @@ def get_output (fnames, mystring):
         except:
             print(fname + " does not exist, continuing")
         else:
-#            p = []
             for line in f:
                 if "time_secondsf" in line:
                     ll = line.split()
-#                    p.append(float(ll[-1].replace('D','e')))
-#                    p.append(np.NaN)
                     timev.append(float(ll[-1].replace('D','e')))
                     myvar.append(np.NaN)
 
                 if mystring in line:
                     ll = line.split()
-#                    p[1] = float(ll[-1].replace('D','e'))
-#                    pp.append(p)
-#                    p = []
                     myvar[-1] = float(ll[-1].replace('D','e'))
 
             f.close()
 
-
     timevs=np.asarray(timev)
     myvars=np.asarray(myvar)
     isort = np.argsort(timevs)
-    timevs=timevs[isort]
-    myvars=myvars[isort]
-#    ppp = sorted( pp, key = getKey )
-#    indx = sorted(range(len(timev)), key=lambda k: timev[k])
-#    myvars=[]
-#    timevs=[]
-#    for k in range(len(pp)):
-#        myvars.append(ppp[k][1])
-#        timevs.append(ppp[k][0])
 
-    return timevs, myvars
+    return timevs[isort], myvars[isort]
 # done
 
 fig = plt.figure(figsize=(12, 4))
 ax=fig.add_subplot(111)
 
 refdate = datetime.datetime(1,1,1,0,0)
-#refdate = datetime.datetime(1979,1,1,0,0)
+refdate = datetime.datetime(1979,1,1,0,0)
 #refdate = datetime.datetime(1958,1,1,0,0)
 # determine start date
 with open(files[0]) as f:
@@ -91,6 +100,8 @@ with open(files[0]) as f:
 
 #refdate = datetime.datetime(2001,1,1)
 timesec, h = get_output(files, mystr)
+# looks nicer but it is slower:
+# timesec, h = get_monitor(files, mystr)
 if np.all(np.isnan(h)): sys.exit("only nans in timeseries")
 timeday = np.asarray(timesec)/86400.
 #xdays = refdate + timeday * datetime.timedelta(days=1)
@@ -113,4 +124,4 @@ print("std        = "+str(np.std(hh)))
 print("last-first = "+str(h[-1]-h[0]))
 
 
-plt.show()
+#plt.show()
